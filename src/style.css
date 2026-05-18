@@ -1,0 +1,120 @@
+/* Base page styling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #2a1619;
+    /* Deep maroon background */
+    background-image: radial-gradient(circle, #3d2226 0%, #1a0d0f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Kokonor', 'Noto Serif Tibetan', 'Georgia', serif;
+    color: #3b2314;
+    /* Dark ink color */
+    overflow-x: hidden;
+}
+
+/* The SVG Filter applies organic noise to the edges */
+.svg-filter-container {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.manuscript-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    /* Apply the SVG filter for the torn edge */
+    filter: url(#torn-edges);
+    z-index: 0;
+
+    /* Base parchment color */
+    background-color: #dfc494;
+
+    /* Layered backgrounds for aging and texture */
+    background-image:
+        /* Darken left and right edges */
+        linear-gradient(to right, rgba(101, 67, 33, 0.6) 0%, rgba(223, 196, 148, 0) 5%, rgba(223, 196, 148, 0) 95%, rgba(101, 67, 33, 0.6) 100%),
+        /* Darken top and bottom edges */
+        linear-gradient(to bottom, rgba(101, 67, 33, 0.4) 0%, rgba(223, 196, 148, 0) 10%, rgba(223, 196, 148, 0) 90%, rgba(101, 67, 33, 0.4) 100%),
+        /* Subtle horizontal fiber lines */
+        repeating-linear-gradient(to bottom, transparent, transparent 2px, rgba(139, 107, 61, 0.05) 3px, rgba(139, 107, 61, 0.05) 4px);
+
+}
+
+/* The Manuscript Page Container */
+.manuscript-page {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    /* Initial Portrait Mode (tall and narrower) */
+    width: 90vw;
+    min-height: 70vh;
+    padding: 20px;
+    flex-direction: row;
+    /* Stack items vertically */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Landscape Mode (wide and short, traditional pecha style) */
+@media (orientation: landscape) {
+    .manuscript-page {
+        width: 95vw;
+        min-height: 70vh;
+        padding: 15px 40px;
+        flex-direction: column;
+        /* Place items side-by-side */
+    }
+}
+
+.manuscript-page > div{
+    z-index: 1;
+}
+
+/* The actual prayer text area */
+.prayer-text {
+    flex-grow: 1;
+    padding: 0 20px;
+    text-align: justify;
+    line-height: 1.6;
+    z-index: 1;
+
+    font-size: clamp(14px, 1.5vw, 18px);
+    /* Responsive font size */
+}
+
+/* Styling to make regular text look a bit more rhythmic/script-like */
+.prayer-text p {
+    margin: 5px 0;
+    border-bottom: 1px solid rgba(139, 107, 61, 0.2);
+    /* Guideline effect */
+}
+
+.initial-letter {
+    color: #a83232;
+    /* Traditional red ink for starting words */
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+/* FONT FACE */
+
+@font-face {
+    font-family: 'KokonorTibetan';
+    src: url('./assets/fonts/Kokonor.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'Monlam Uni 2';
+    src: url('./assets/fonts/Monlam\ Uni\ OuChan2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
