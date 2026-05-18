@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080"
+const BASE_URL = process.env.VITE_API_URL | "http://localhost:8080";
 
 // ---- Users -------
 export const API_URL_USERS =  `${BASE_URL}/user`;
