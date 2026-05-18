@@ -1,30 +1,11 @@
-import usePrayer from "../hooks/usePrayers";
+import { useEffect } from "react";
 import List from "./List";
 import { Link } from "react-router-dom";
-import useLiked from "../hooks/useLiked";
 
-export default function Home() {
-  const { prayers, loading: prayersLoading, error: prayersError } = usePrayer();
-  const { likedPrayers, loading: likedLoading, error: likedError } = useLiked();
-
-  const likedPrayerList = prayers.filter((prayer) => {
-    let id = prayer.number;
-    if (likedPrayers.includes(id)) return prayer;
-  });
-
-  const isLoggedIn = localStorage.getItem("username") != null;
-  const name = isLoggedIn
-    ? `${localStorage.getItem("firstname")?.toUpperCase() || ""} ${localStorage.getItem("lastname")?.toUpperCase() || ""}`.trim()
-    : "";
-
-  if (prayersLoading || likedLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (prayersError || likedError) {
-    return <div>Error: {prayersError || likedError}</div>;
-  }
-
+export default function Home({ prayers, likedPrayers, userId, topLiked }) {
+  let LikedPrayersContent = prayers.filter((prayer) =>
+    likedPrayers.includes(prayer.number),
+  );
   return (
     <div className="manuscript-page">
       <svg className="svg-filter-container">
@@ -47,9 +28,9 @@ export default function Home() {
       <div>
         <h1>དགའ་རྟགས་ཡོད་པས་ཞལ་འདོན་ཁག།</h1>
         <hr />
-        {isLoggedIn ? (
+        {userId != null ? (
           <>
-            <h3>Welcome {name}</h3>
+            <h3> བྱོན་པ་ལེགས། </h3>
           </>
         ) : (
           <button className="btn btn-primary">
@@ -57,7 +38,7 @@ export default function Home() {
           </button>
         )}
 
-        <List values={likedPrayerList} />
+        <List values={LikedPrayersContent} />
 
         <br />
         <br />
@@ -65,7 +46,9 @@ export default function Home() {
         <hr />
         <List values={prayers} />
 
-        <button className="btn btn-primary">Welcome</button>
+        <h1>ཆེས་དགའ་ཤོས་བྱེད་པས་ཞལ་འདོན་ཁག་གཅིག།</h1>
+        <hr />
+        <List values={topLiked} />
       </div>
     </div>
   );

@@ -1,11 +1,12 @@
 import { User } from "lucide-react";
-import Login, { unsetLocalStorage } from "./Login";
+import Login from "./Login";
 import { Link } from "react-router-dom";
+import { unsetLocalStorage } from "../Tool";
 
-export default function Nav() {
+export default function Nav({ userId, setUserId }) {
   let handleLogOut = () => {
     unsetLocalStorage();
-    window.location.reload();
+    setUserId(null);
   };
   return (
     <nav className="navbar">
@@ -16,27 +17,25 @@ export default function Nav() {
 
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a className="nav-link active" aria-current="page" href="#">
-              <User size={24} color="white" />
-              {localStorage.getItem("username") != null ? (
-                <>
-                  {localStorage.getItem("firstname") +
-                    localStorage.getItem("lastname")}
-                  <button
-                    className="btn btn-danger m-3"
-                    onClick={() => handleLogOut()}
-                  >
-                    Log Out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link className="btn btn-primary m-4" to="/login">
-                    Login
-                  </Link>
-                </>
-              )}
-            </a>
+            <User size={24} color="white" />
+            {userId != null ? (
+              <>
+                {localStorage.getItem("firstname") +
+                  localStorage.getItem("lastname")}
+                <button
+                  className="btn btn-danger m-3"
+                  onClick={() => handleLogOut()}
+                >
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link className="btn btn-primary m-4" to="/login">
+                  Login
+                </Link>
+              </>
+            )}
           </li>
         </ul>
       </div>

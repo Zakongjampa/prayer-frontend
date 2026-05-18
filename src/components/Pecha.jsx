@@ -1,82 +1,19 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { API_URL_LIKES, API_URL_PRAYERS } from "../../ApiUrls";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { ThumbsUp } from "lucide-react";
-import useLiked from "../hooks/useLiked";
 
-export default function Pecha() {
+export default function Pecha({
+  prayers,
+  userId,
+  likedPrayers,
+  handleLikeButton,
+}) {
   const { id } = useParams();
-  const [prayer, setPrayer] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [like, setLike] = useState(false);
-  const loginData = localStorage.getItem("username");
-  const url = API_URL_LIKES + "/" + localStorage.getItem("id") + "/" + id;
-  const { likedPrayers, loading: likedLoading, error: likedError } = useLiked();
-
-  useEffect(() => {
-    if (id) {
-      axios
-        .get(`${API_URL_PRAYERS}/${id}`)
-        .then((res) => setPrayer(res.data))
-        .catch((err) => setError(err.message))
-        .finally(() => setLoading(false));
-    }
-    setLike(likedPrayers.includes(id));
-    console.log(url);
-  }, [id]);
-
-  const handleLikeButton = () => {
-    if (like) {
-      setLike(false);
-      console.log(url);
-      axios
-        .delete(url)
-        .then((res) =>
-          res.status
-            ? alert(
-                "ཁྱེད་ཀྱི་ཞལ་འདོན་" +
-                  prayer.name +
-                  "ལ་དགའ་རྟགས་མེད་པ་བཟོ་འངུག།",
-              )
-            : null,
-        )
-        .catch((error) => console.log(error));
-    } else {
-      setLike(true);
-      axios
-        .post(url)
-        .then((res) =>
-          res.status
-            ? alert(
-                "ཁྱེད་ཀྱི་ཞལ་འདོན་" + prayer.name + "ལ་དགའ་རྟགས་སྤྲོད་འངུག།",
-              )
-            : null,
-        )
-        .catch((error) => console.log(error));
-    }
-  };
-
-  if (loading)
-    return (
-      <div className="container mt-5">
-        <p>Loading...</p>
-      </div>
-    );
-  if (error)
-    return (
-      <div className="container mt-5">
-        <p>Error: {error}</p>
-      </div>
-    );
-  if (!prayer)
-    return (
-      <div className="container mt-5">
-        <p>Prayer not found</p>
-      </div>
-    );
+  const [prayer, setPrayer] = useState(
+    prayers.filter((prayer) => prayer.number == id),
+  );
+  let liked = likedPrayers.includes(+id);
 
   return (
     <div className="container mt-5 manuscript-page">
@@ -103,15 +40,18 @@ export default function Pecha() {
             ← Back to List
           </Link>
 
-          {loginData ? (
-            <button onClick={handleLikeButton} style={{ marginLeft: "90px" }}>
-              <ThumbsUp size={40} fill={like ? "red" : "none"} />
+          {userId != null ? (
+            <button
+              onClick={() => handleLikeButton(+id)}
+              style={{ marginLeft: "90px" }}
+            >
+              <ThumbsUp size={40} fill={liked ? "red" : "none"} />
             </button>
           ) : null}
         </div>
-        <h2>{prayer.name}</h2>
+        <h2>{prayer[0].name}</h2>
         <div className="fs-4">
-          <ReactMarkdown>{prayer.content || ""}</ReactMarkdown>
+          <ReactMarkdown>{prayer[0].content || ""}</ReactMarkdown>
         </div>
       </div>
     </div>

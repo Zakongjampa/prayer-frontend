@@ -2,8 +2,9 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL_LOGIN } from "../../ApiUrls";
+import { setLocalStorage } from "../Tool";
 
-export default function Login() {
+export default function Login({ setUserId }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,7 @@ export default function Login() {
       });
 
       setLocalStorage(response);
+      setUserId(response.data.id);
 
       navigate("/");
     } catch (err) {
@@ -29,7 +31,6 @@ export default function Login() {
         err.response?.data?.message ||
           "Login failed. Please check your credentials.",
       );
-      console.error("Login error:", err);
     } finally {
       setLoading(false);
     }
@@ -80,19 +81,3 @@ export default function Login() {
     </div>
   );
 }
-
-function setLocalStorage(response) {
-  localStorage.setItem("username", response.data.username);
-  localStorage.setItem("id", response.data.id);
-  localStorage.setItem("firstname", response.data.firstName);
-  localStorage.setItem("lastname", response.data.lastName);
-}
-
-function unsetLocalStorage() {
-  localStorage.removeItem("username");
-  localStorage.removeItem("id");
-  localStorage.removeItem("firstname");
-  localStorage.removeItem("lastname");
-}
-
-export { unsetLocalStorage };
