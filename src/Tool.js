@@ -1,8 +1,11 @@
 function setLocalStorage(response) {
-  localStorage.setItem("username", response.data.username);
-  localStorage.setItem("id", response.data.id);
-  localStorage.setItem("firstname", response.data.firstName);
-  localStorage.setItem("lastname", response.data.lastName);
+  const user = response?.data ?? {};
+
+  localStorage.setItem("username", user.username ?? "");
+  localStorage.setItem("id", user.id ?? "");
+  localStorage.setItem("firstname", user.firstName ?? "");
+  localStorage.setItem("lastname", user.lastName ?? "");
+  localStorage.setItem("isAdmin", String(Boolean(user.admin)));
 }
 
 function unsetLocalStorage() {
@@ -10,6 +13,7 @@ function unsetLocalStorage() {
   localStorage.removeItem("id");
   localStorage.removeItem("firstname");
   localStorage.removeItem("lastname");
+  localStorage.removeItem("isAdmin");
 }
 
 export {setLocalStorage, unsetLocalStorage}

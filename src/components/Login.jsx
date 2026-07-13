@@ -22,6 +22,8 @@ export default function Login({ setUserId }) {
         password: password,
       });
 
+      debugger;
+
       setLocalStorage(response);
       setUserId(response.data.id);
 

@@ -11,12 +11,12 @@ export default function Nav({ userId, setUserId }) {
   return (
     <nav className="navbar">
       <div className="container-fluid">
-        <a className="navbar-brand fs-1" href="">
+        <a className="navbar-brand fs-1 text-white" href="">
           ཞལ་འདོན་དཔེ་ཆ།
         </a>
 
         <ul className="navbar-nav">
-          <li className="nav-item">
+          <li className="nav-item text-white">
             <User size={24} color="white" />
             {userId != null ? (
               <>

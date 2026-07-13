@@ -11,6 +11,7 @@ export default function SignUp() {
     username: "",
     hashedPassword: "",
     email: "",
+    isAdmin: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,14 +21,25 @@ export default function SignUp() {
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSelection = (e) => {
+    const { name, value } = e.target;
+    const isAdminValue = value === "true";
+
+    setData((prev) => ({ ...prev, [name]: isAdminValue }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    debugger;
 
     try {
-      await axios.post(API_URL_USERS, data);
+      const payload = {
+        ...data,
+        isAdmin: Boolean(data.isAdmin),
+      };
+
+      await axios.post(API_URL_USERS, payload);
       navigate("/login");
     } catch (err) {
       setError(
@@ -112,6 +124,22 @@ export default function SignUp() {
             onChange={handleChange}
             required
           />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="isAdmin" className="form-label">
+            isAdmin
+          </label>
+          <br />
+          <select
+            name="isAdmin"
+            id="isAdmin"
+            value={String(data.isAdmin)}
+            onChange={handleSelection}
+          >
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
         </div>
         <button type="submit" className="btn btn-primary" disabled={loading}>
           {loading ? "Registering..." : "Register"}

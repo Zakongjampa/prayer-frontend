@@ -8,5 +8,5 @@ export const API_URL_LOGIN = `${BASE_URL}/login`;
 
 function getBaseUrl() {
     // Fallback for when the env var isn’t defined (e.g. local dev)
-    return import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+    return import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
   }

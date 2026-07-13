@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import Pecha from "./components/Pecha";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import InsertPecha from "./components/InsertPecha";
 import axios from "axios";
 import { API_URL_PRAYERS, API_URL_LIKES, API_URL_USERS } from "../ApiUrls";
 
@@ -94,6 +95,7 @@ function App() {
               likedPrayers={likedPrayers}
               userId={userId}
               topLiked={topLikedPrayers}
+              users={users}
             />
           }
         />
@@ -114,6 +116,7 @@ function App() {
           path="*"
           element={<h2 style={{ zIndex: "1" }}>Page Not Found</h2>}
         />
+        <Route path="/insertPecha" element={<InsertPecha />}></Route>
       </Routes>
     </Fragment>
   );

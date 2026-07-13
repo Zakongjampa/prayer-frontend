@@ -1,11 +1,19 @@
 import { useEffect } from "react";
+import InsertPecha from "./InsertPecha";
 import List from "./List";
 import { Link } from "react-router-dom";
 
-export default function Home({ prayers, likedPrayers, userId, topLiked }) {
+export default function Home({
+  prayers,
+  likedPrayers,
+  userId,
+  topLiked,
+  users,
+}) {
   let LikedPrayersContent = prayers.filter((prayer) =>
     likedPrayers.includes(prayer.number),
   );
+
   return (
     <div className="manuscript-page">
       <svg className="svg-filter-container">
@@ -31,6 +39,11 @@ export default function Home({ prayers, likedPrayers, userId, topLiked }) {
         {userId != null ? (
           <>
             <h3> བྱོན་པ་ལེགས། </h3>
+            {localStorage.getItem("isAdmin") === "true" && (
+              <button className="btn btn-primary fs-3">
+                <Link to={"/insertPecha"}>གསར་འཇུགས།</Link>
+              </button>
+            )}
           </>
         ) : (
           <button className="btn btn-primary">
