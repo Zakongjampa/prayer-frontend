@@ -1,19 +1,39 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { ThumbsUp } from "lucide-react";
+import axios from "axios";
+import { API_URL_PRAYER_ID } from "../../ApiUrls";
 
-export default function Pecha({
-  prayers,
-  userId,
-  likedPrayers,
-  handleLikeButton,
-}) {
+export default function Pecha({ userId, likedPrayers, handleLikeButton }) {
   const { id } = useParams();
-  const [prayer, setPrayer] = useState(
-    prayers.filter((prayer) => prayer.number == id),
-  );
-  let liked = likedPrayers.includes(+id);
+  const [prayer, setPrayer] = useState();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(API_URL_PRAYER_ID + id)
+      .then((response) => setPrayer(response.data))
+      .catch((err) => setError("Failed to fetch the Prayer: " + err.message))
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return <div className="container mt-5">Loading prayer...</div>;
+  }
+
+  if (error) {
+    return <div className="container mt-5">{error}</div>;
+  }
+
+  if (!prayer) {
+    return <div className="container mt-5">Prayer not found.</div>;
+  }
+
+  const liked = likedPrayers.includes(+id);
 
   return (
     <div className="container mt-5 manuscript-page">
@@ -49,9 +69,9 @@ export default function Pecha({
             </button>
           ) : null}
         </div>
-        <h2>{prayer[0].name}</h2>
+        <h2>{prayer.name}</h2>
         <div className="fs-4">
-          <ReactMarkdown>{prayer[0].content || ""}</ReactMarkdown>
+          <ReactMarkdown>{prayer.content || ""}</ReactMarkdown>
         </div>
       </div>
     </div>

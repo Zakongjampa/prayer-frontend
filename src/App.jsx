@@ -7,10 +7,14 @@ import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import InsertPecha from "./components/InsertPecha";
 import axios from "axios";
-import { API_URL_PRAYERS, API_URL_LIKES, API_URL_USERS } from "../ApiUrls";
+import {
+  API_URL_PRAYERS,
+  API_URL_LIKES,
+  API_URL_USERS,
+  API_URL_PRAYER_NAME,
+} from "../ApiUrls";
 
 function App() {
-  const [prayers, setPrayers] = useState([]);
   const [userId, setUserId] = useState(
     () => localStorage.getItem("id") ?? null,
   );
@@ -19,11 +23,12 @@ function App() {
   const [topLikedPrayers, setTopLikedPrayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [prayerNames, setPrayerNames] = useState([]);
 
   let fetchLikedPrayers = () => {
     if (userId == null) return;
     axios
-      .get(API_URL_LIKES + "/" + userId)
+      .get(API_URL_LIKES + "/" + userId + "/prayers")
       .then((response) => setLikedPrayers(response.data))
       .catch((err) => setError("An error occurs " + err));
   };
@@ -44,14 +49,14 @@ function App() {
         .catch((err) => setError("Failed to dislike prayer" + err));
     }
   };
-  // Getting the prayers
+
   useEffect(() => {
     axios
-      .get(API_URL_PRAYERS)
+      .get(API_URL_PRAYER_NAME)
       .then((response) => {
-        setPrayers(response.data);
+        setPrayerNames(response.data);
       })
-      .catch((err) => setError("Failed to Load Prayers" + err))
+      .catch((err) => setError("Failed to fetch the Prayer names " + err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -73,6 +78,7 @@ function App() {
     fetchLikedPrayers();
   }, [userId]);
 
+  // top liked prayer
   useEffect(() => {
     axios
       .get(API_URL_LIKES + "/top-liked")
@@ -91,7 +97,7 @@ function App() {
           path="/"
           element={
             <Home
-              prayers={prayers}
+              prayers={prayerNames}
               likedPrayers={likedPrayers}
               userId={userId}
               topLiked={topLikedPrayers}
@@ -103,7 +109,6 @@ function App() {
           path="/prayer/:id"
           element={
             <Pecha
-              prayers={prayers}
               userId={userId}
               likedPrayers={likedPrayers}
               handleLikeButton={handleLikeButton}

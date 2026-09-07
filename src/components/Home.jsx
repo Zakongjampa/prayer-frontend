@@ -10,10 +10,6 @@ export default function Home({
   topLiked,
   users,
 }) {
-  let LikedPrayersContent = prayers.filter((prayer) =>
-    likedPrayers.includes(prayer.number),
-  );
-
   return (
     <div className="manuscript-page">
       <svg className="svg-filter-container">
@@ -51,7 +47,7 @@ export default function Home({
           </button>
         )}
 
-        <List values={LikedPrayersContent} />
+        <List values={likedPrayers} />
 
         <br />
         <br />
