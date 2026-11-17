@@ -1,0 +1,33 @@
+.home-paper-texture {
+  background-image:
+    radial-gradient(ellipse at 82% 18%, rgba(255, 255, 255, 0.6), transparent 35%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(111, 77, 42, 0.025) 0,
+      rgba(111, 77, 42, 0.025) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+}
+
+.home-manuscript-texture {
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(112, 78, 45, 0.08),
+      transparent 12%,
+      transparent 88%,
+      rgba(112, 78, 45, 0.08)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 1.5rem,
+      rgba(120, 87, 54, 0.06) 1.55rem,
+      transparent 1.6rem
+    );
+}
+
+.home-tibetan {
+  font-family: "KokonorTibetan", "Noto Serif Tibetan", serif;
+}

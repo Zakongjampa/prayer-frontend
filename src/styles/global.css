@@ -1,3 +1,7 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities";
+
 /* Base page styling */
 body {
     margin: 0;
@@ -13,6 +17,11 @@ body {
     color: #3b2314;
     /* Dark ink color */
     overflow-x: hidden;
+}
+
+#root {
+    width: 100%;
+    min-height: 100vh;
 }
 
 /* The SVG Filter applies organic noise to the edges */
@@ -106,17 +115,35 @@ body {
 
 @font-face {
     font-family: 'KokonorTibetan';
-    src: url('./assets/fonts/Kokonor.ttf') format('truetype');
+    src: url('../assets/fonts/Kokonor.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 
 @font-face {
     font-family: 'Monlam Uni 2';
-    src: url('./assets/fonts/Monlam\ Uni\ OuChan2.ttf') format('truetype');
+    src: url('../assets/fonts/Monlam\ Uni\ OuChan2.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monlam Uni OuChan2 Alternate';
+    src: url('../assets/fonts/Monlam_Uni_OuChan2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monlam Uni TypeWriter2';
+    src: url('../assets/fonts/Monlam_Uni_TypeWriter2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
 

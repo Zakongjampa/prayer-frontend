@@ -1,121 +1,102 @@
-import { Fragment, useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Fragment, useCallback, useState, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Nav from "./components/Nav";
-import Home from "./components/Home";
-import Pecha from "./components/Pecha";
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
-import InsertPecha from "./components/InsertPecha";
-import axios from "axios";
+import Home from "./pages/Home";
+import Prayers from "./pages/Prayers";
+import ReadPecha from "./pages/ReadPecha";
+import Books from "./pages/Books";
+import ReadBook from "./pages/ReadBook";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import InsertPecha from "./pages/InsertPecha";
 import {
-  API_URL_PRAYERS,
-  API_URL_LIKES,
-  API_URL_USERS,
-  API_URL_PRAYER_NAME,
-} from "../ApiUrls";
+  getLikedByCurrentUser,
+  likePrayer,
+  unlikePrayer,
+} from "./services/likesService";
 
 function App() {
+  const { pathname } = useLocation();
   const [userId, setUserId] = useState(
     () => localStorage.getItem("id") ?? null,
   );
-  const [users, setUsers] = useState([]);
   const [likedPrayers, setLikedPrayers] = useState([]);
-  const [topLikedPrayers, setTopLikedPrayers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [prayerNames, setPrayerNames] = useState([]);
 
-  let fetchLikedPrayers = () => {
-    if (userId == null) return;
-    axios
-      .get(API_URL_LIKES + "/" + userId + "/prayers")
-      .then((response) => setLikedPrayers(response.data))
-      .catch((err) => setError("An error occurs " + err));
-  };
+  const updateUserId = useCallback((nextUserId) => {
+    setUserId(nextUserId);
+    if (nextUserId == null) {
+      setLikedPrayers([]);
+      setError(null);
+    }
+  }, []);
 
-  let handleLikeButton = (prayerId) => {
-    let url = API_URL_LIKES + "/" + userId + "/" + prayerId;
-    if (!likedPrayers.includes(prayerId)) {
-      console.log("Like");
-      axios
-        .post(url)
-        .then(() => fetchLikedPrayers())
-        .catch((err) => setError("Failed to like prayer " + err));
-    } else {
-      console.log("Dislike");
-      axios
-        .delete(url)
-        .then(() => fetchLikedPrayers())
-        .catch((err) => setError("Failed to dislike prayer" + err));
+  const fetchLikedPrayers = useCallback(() => {
+    return getLikedByCurrentUser()
+      .then(setLikedPrayers)
+      .catch((err) => {
+        if (localStorage.getItem("id") == null) {
+          setLikedPrayers([]);
+          return;
+        }
+        setError("An error occurs " + err);
+      });
+  }, []);
+
+  const handleLikeButton = async (prayerId) => {
+    try {
+      if (likedPrayers.includes(prayerId)) {
+        await unlikePrayer(prayerId);
+      } else {
+        await likePrayer(prayerId);
+      }
+      await fetchLikedPrayers();
+    } catch (err) {
+      if (localStorage.getItem("id") == null) {
+        setLikedPrayers([]);
+        return;
+      }
+      setError("Failed to update prayer like " + err);
     }
   };
 
   useEffect(() => {
-    axios
-      .get(API_URL_PRAYER_NAME)
-      .then((response) => {
-        setPrayerNames(response.data);
-      })
-      .catch((err) => setError("Failed to fetch the Prayer names " + err))
-      .finally(() => setLoading(false));
-  }, []);
+    if (userId != null) fetchLikedPrayers();
+  }, [fetchLikedPrayers, userId]);
 
-  // fetching the users
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(API_URL_USERS);
-        setUsers(response.data);
-      } catch (err) {
-        setError("Error fetching users " + err);
-      }
-    };
-    fetchUsers();
-  }, []);
+    const handleSessionExpired = () => updateUserId(null);
+    window.addEventListener("auth:session-expired", handleSessionExpired);
+    return () =>
+      window.removeEventListener("auth:session-expired", handleSessionExpired);
+  }, [updateUserId]);
 
-  // fetching the likedprayers
-  useEffect(() => {
-    fetchLikedPrayers();
-  }, [userId]);
+  const isBookReader = /^\/books\/[^/]+$/.test(pathname);
 
-  // top liked prayer
-  useEffect(() => {
-    axios
-      .get(API_URL_LIKES + "/top-liked")
-      .then((response) => setTopLikedPrayers(response.data))
-      .catch((err) => setError("An error occured " + err));
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <Fragment>
-      <Nav userId={userId} setUserId={setUserId} />
+      {!isBookReader && <Nav userId={userId} setUserId={updateUserId} />}
       <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/prayers" element={<Prayers userId={userId} />} />
+        <Route path="/books" element={<Books userId={userId} />} />
         <Route
-          path="/"
-          element={
-            <Home
-              prayers={prayerNames}
-              likedPrayers={likedPrayers}
-              userId={userId}
-              topLiked={topLikedPrayers}
-              users={users}
-            />
-          }
+          path="/books/:id"
+          element={<ReadBook key={pathname} userId={userId} />}
         />
         <Route
           path="/prayer/:id"
           element={
-            <Pecha
+            <ReadPecha
               userId={userId}
               likedPrayers={likedPrayers}
               handleLikeButton={handleLikeButton}
             />
           }
         />
-        <Route path="/login" element={<Login setUserId={setUserId} />} />
+        <Route path="/login" element={<Login setUserId={updateUserId} />} />
         <Route path="/signup" element={<SignUp />} />
         <Route
           path="*"

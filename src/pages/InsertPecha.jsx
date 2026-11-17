@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useState } from "react";
-import { API_URL_PRAYERS } from "../../ApiUrls";
+import { createPrayer } from "../services/prayerService";
 
 export default function InsertPecha() {
   const [data, setData] = useState({
@@ -23,7 +22,7 @@ export default function InsertPecha() {
     setSuccess("");
 
     try {
-      await axios.post(API_URL_PRAYERS, data);
+      await createPrayer(data);
       setData({ name: "", content: "" });
       setSuccess("ཞལ་འདོན་ནང་འཇུགས་བྱས་ཚར།");
     } catch (err) {
